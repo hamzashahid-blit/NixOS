@@ -10,6 +10,8 @@
       ./hardware-configuration.nix
     ];
 
+  boot.kernelParams = [ "video=1920x1080" ];
+
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
@@ -30,7 +32,7 @@
     ShowDelay=0
   '';
 
-  networking.hostName = "Studio-1555"; # Define your hostname.
+  networking.hostName = "Hamzas-PC"; # Define your hostname.
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Set your time zone.
@@ -41,7 +43,7 @@
   # replicates the default behaviour.
   networking.useDHCP = false;
   networking.interfaces.enp8s0.useDHCP = true;
-  networking.interfaces.wlp4s0.useDHCP = true;
+  #networking.interfaces.wlp4s0.useDHCP = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -75,7 +77,7 @@
   #services.xserver.xautolock.enable = true;
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  #services.printing.enable = true;
 
   # Enable sound.
   sound.enable = true;
@@ -85,7 +87,7 @@
   services.xserver.libinput.enable = true;
 
   services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.desktopManager.xfce.enable = true;
+  services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.windowManager.xmonad.enable = true;
   services.xserver.windowManager.xmonad.enableContribAndExtras = true;
   #services.xserver.windowManager.stumpwm.enable = true;
@@ -105,10 +107,10 @@
     vim
     git
 
-    # XFCE4
-    arc-theme
-    papirus-icon-theme
-    pkgs.xfce.xfce4-whiskermenu-plugin
+    # # XFCE4
+    # arc-theme
+    # papirus-icon-theme
+    # pkgs.xfce.xfce4-whiskermenu-plugin
 
     # Big but neccessary programs
     firefox
@@ -151,7 +153,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "20.09"; # Did you read the comment?
+  system.stateVersion = "21.11"; # Did you read the comment?
 
 }
 

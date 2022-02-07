@@ -8,24 +8,38 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "uhci_hcd" "ehci_pci" "ahci" "firewire_ohci" "usb_storage" "sd_mod" "sr_mod" "sdhci_pci" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/sda3";
+    { device = "/dev/disk/by-uuid/30cd2e6f-08b2-4179-80f2-2ea258375316";
       fsType = "btrfs";
-      options = [ "subvol=nixos" ];
+      options = [ "subvol=@" ];
     };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/DDD9-BB21";
-      fsType = "vfat";
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/30cd2e6f-08b2-4179-80f2-2ea258375316";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
+    };
+
+  fileSystems."/.snapshots" =
+    { device = "/dev/disk/by-uuid/30cd2e6f-08b2-4179-80f2-2ea258375316";
+      fsType = "btrfs";
+      options = [ "subvol=@snapshots" ];
+    };
+
+  fileSystems."/var/log" =
+    { device = "/dev/disk/by-uuid/30cd2e6f-08b2-4179-80f2-2ea258375316";
+      fsType = "btrfs";
+      options = [ "subvol=@var_log" ];
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/2bdcc368-dbcb-418f-81f7-0f53487e440e"; }
+    [ { device = "/dev/disk/by-uuid/d5991c57-b789-48e8-9b65-3b0a5e97d0a7"; }
     ];
 
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
