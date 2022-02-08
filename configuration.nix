@@ -33,7 +33,7 @@
   '';
 
   networking.hostName = "Hamzas-PC"; # Define your hostname.
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.wireless.enable = false;  # Enables wireless support via wpa_supplicant.
 
   # Set your time zone.
   time.timeZone = "Asia/Karachi";
@@ -94,9 +94,23 @@
 
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.hamza = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
+  users.users = {
+    hamza = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
+    };
+    saba = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
+    };
+    tahseen = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
+    };
+    shahid = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
+    };
   };
 
   # List packages installed in system profile. To search, run:
@@ -117,6 +131,7 @@
     #qutebrowser
 
     # Big Programs
+    libreoffice
     #gimp
   ];
 

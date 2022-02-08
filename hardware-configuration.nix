@@ -14,31 +14,31 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/30cd2e6f-08b2-4179-80f2-2ea258375316";
+    { device = "/dev/disk/by-uuid/da1c5d05-af1e-463f-89df-16878e32e8fa";
       fsType = "btrfs";
       options = [ "subvol=@" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/30cd2e6f-08b2-4179-80f2-2ea258375316";
+    { device = "/dev/disk/by-uuid/da1c5d05-af1e-463f-89df-16878e32e8fa";
       fsType = "btrfs";
       options = [ "subvol=@home" ];
     };
 
   fileSystems."/.snapshots" =
-    { device = "/dev/disk/by-uuid/30cd2e6f-08b2-4179-80f2-2ea258375316";
+    { device = "/dev/disk/by-uuid/da1c5d05-af1e-463f-89df-16878e32e8fa";
       fsType = "btrfs";
       options = [ "subvol=@snapshots" ];
     };
 
   fileSystems."/var/log" =
-    { device = "/dev/disk/by-uuid/30cd2e6f-08b2-4179-80f2-2ea258375316";
+    { device = "/dev/disk/by-uuid/da1c5d05-af1e-463f-89df-16878e32e8fa";
       fsType = "btrfs";
       options = [ "subvol=@var_log" ];
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/d5991c57-b789-48e8-9b65-3b0a5e97d0a7"; }
+    [ { device = "/dev/disk/by-uuid/2090c82e-b2f4-47e4-bdbb-6bad1ce5786e"; }
     ];
 
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
