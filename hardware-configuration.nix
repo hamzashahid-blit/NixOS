@@ -16,25 +16,25 @@
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/da1c5d05-af1e-463f-89df-16878e32e8fa";
       fsType = "btrfs";
-      options = [ "subvol=@" ];
+      options = [ "subvol=@" "rw" "noatime" "space_cache=v2" ];
     };
 
   fileSystems."/home" =
     { device = "/dev/disk/by-uuid/da1c5d05-af1e-463f-89df-16878e32e8fa";
       fsType = "btrfs";
-      options = [ "subvol=@home" ];
+      options = [ "subvol=@home" "rw" "noatime" "space_cache=v2" ];
     };
 
   fileSystems."/.snapshots" =
     { device = "/dev/disk/by-uuid/da1c5d05-af1e-463f-89df-16878e32e8fa";
       fsType = "btrfs";
-      options = [ "subvol=@snapshots" ];
+      options = [ "subvol=@snapshots" "rw" "noatime" "space_cache=v2" ];
     };
 
   fileSystems."/var/log" =
     { device = "/dev/disk/by-uuid/da1c5d05-af1e-463f-89df-16878e32e8fa";
       fsType = "btrfs";
-      options = [ "subvol=@var_log" ];
+      options = [ "subvol=@var_log" "rw" "noatime" "space_cache=v2" ];
     };
 
   swapDevices =

@@ -8,6 +8,8 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+	  ./packages/window-manager.nix
+	  ./modules/btrbk.nix
     ];
 
   boot.kernelParams = [ "video=1920x1080" ];
@@ -21,8 +23,8 @@
   # Define on which hard drive you want to install Grub.
   boot.loader.grub.device = "/dev/sda"; # or "nodev" for efi only
 
-  # for early plymouth showing
-  boot.initrd.kernelModules = [ "i915" ];
+  # for early plymouth showing add "i915"
+  boot.initrd.kernelModules = [ "amdgpu" ];
 
   # Nice Eye Candy and Functional Boot Splash Screen
   boot.plymouth.enable = true; 
@@ -34,6 +36,8 @@
 
   networking.hostName = "Hamzas-PC"; # Define your hostname.
   networking.wireless.enable = false;  # Enables wireless support via wpa_supplicant.
+
+  powerManagement.cpuFreqGovernor = "performance";
 
   # Set your time zone.
   time.timeZone = "Asia/Karachi";
@@ -66,8 +70,21 @@
     '';
   };
 
+  # Enable NUR
+  nixpkgs.config.packageOverrides = pkgs: {
+    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+      inherit pkgs;
+    };
+  };
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+
+  # Fix Screen Tearing, disable if action gaming (brodie robertson)
+  services.xserver.videoDrivers = [ "amdgpu" ];
+  services.xserver.deviceSection = ''
+    Option "TearFree" "true"
+  '';
 
   # Configure keymap in X11
   services.xserver.layout = "us";
@@ -79,6 +96,11 @@
   # Enable CUPS to print documents.
   #services.printing.enable = true;
 
+  services.flatpak.enable = true;
+
+  services.tor.enable = true;
+  # tor.client.enable = true;
+
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
@@ -87,31 +109,51 @@
   services.xserver.libinput.enable = true;
 
   services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.displayManager.defaultSession = "none+xmonad";
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.windowManager.xmonad.enable = true;
   services.xserver.windowManager.xmonad.enableContribAndExtras = true;
-  #services.xserver.windowManager.stumpwm.enable = true;
+  services.xserver.windowManager.stumpwm.enable = true;
+  services.xserver.windowManager.stumpwm-wrapper.enable = true;
 
+  virtualisation.libvirtd.enable = true;
+  programs.dconf.enable = true;
+
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+    "steam"
+    "steam-original"
+    "steam-runtime"
+  ];
+
+  programs.steam.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users = {
-    hamza = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
-    };
-    saba = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
-    };
-    tahseen = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
-    };
-    shahid = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" "audio" "sound" "video" ]; # Enable ‘sudo’ for the user.
-    };
+  users = {
+    #defaultUserShell = pkgs.zsh;
+	users = {
+	  hamza = {
+		isNormalUser = true;
+		extraGroups = [ "wheel" "audio" "sound" "video" "libvirtd" ];
+        shell = pkgs.zsh;
+      };
+	  saba = {
+	    isNormalUser = true;
+		extraGroups = [ "wheel" "audio" "sound" "video" "libvirtd" ];
+	  };
+	  tahseen = {
+	    isNormalUser = true;
+	  	extraGroups = [ "wheel" "audio" "sound" "video" "libvirtd" ];
+	  };
+	  shahid = {
+	  	isNormalUser = true;
+	  	extraGroups = [ "wheel" "audio" "sound" "video" "libvirtd" ];
+	  };
+	};
   };
+
+  # Enable ever more extra development man-pages
+  # (I say even because home.nix contains man-page programs)
+  documentation.dev.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -128,12 +170,38 @@
 
     # Big but neccessary programs
     firefox
+    #librewolf
     #qutebrowser
 
     # Big Programs
     libreoffice
-    #gimp
+	virt-manager
+    gimp
+    wineWowPackages.stable # Wine support both 32- and 64-bit applications
+
+	# Other Programs
+    libsForQt5.kolourpaint
+	jdk8 # for TLauncher/minecraft which requires sudo
+	ventoy-bin
   ];
+
+  hardware.opengl.extraPackages = with pkgs; [
+     rocm-opencl-icd
+     rocm-opencl-runtime
+  ];
+
+  # ## Vulkan
+  # hardware.opengl.driSupport = true;
+  # # For 32 bit applications
+  # hardware.opengl.driSupport32Bit = true;
+  # hardware.opengl.extraPackages = with pkgs; [
+  #    amdvlk
+  # ];
+  # # For 32 bit applications 
+  # # Only available on unstable
+  # hardware.opengl.extraPackages32 = with pkgs; [
+  #   driversi686Linux.amdvlk
+  # ];
 
   nixpkgs.overlays = [ (import ./packages) ];
 
@@ -154,10 +222,17 @@
   #users.users.hamza.openssh.authorizedKeys.keys = ["PUBLIC KEY STRING"];
   #users.users.hamza.openssh.authorizedKeys.keyFiles = [ "/home/hamza/.ssh/id_github.pub" ];
   
+  services.cron = {
+	enable = true;
+	systemCronJobs = [
+	  "0 * * * *	root	sh /etc/profile; exec ${pkgs.btrbk}/bin/btrbk -q run"
+	];
+  };
+
   services.xrdp.enable = true;
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 3389 ];
+  networking.firewall.allowedTCPPorts = [ 3389 22 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
